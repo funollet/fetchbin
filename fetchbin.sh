@@ -27,6 +27,10 @@ case $URL in
     tar -xzf $NAME*.tgz ;
     BIN=$NAME ;
     ;;
+  *.zip)
+    unzip -qo $(basename $URL) ;
+    BIN=$NAME ;
+    ;;
   *)
     BIN=$(basename $URL) ;
     ;;
