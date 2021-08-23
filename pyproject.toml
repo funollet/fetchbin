@@ -1,0 +1,53 @@
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.black]
+line_length=88
+exclude = '''
+/(
+    \.git
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[flake8]
+max-line-length = 88
+# Extra config may be required for black compatibility.
+#select = B,C,E,F,W,T4,B9
+#ignore = E203, E266, E501, W503, F403, F401
+
+[tool.poetry]
+name = "fetchbin"
+version = "0.1.0"
+description = "Download and install binary files."
+authors = ["Jordi Funollet <funollet@fastmail.fm>"]
+license = "GPL-3.0"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+requests = "^2.26.0"
+click = "^8.0.1"
+
+[tool.poetry.dev-dependencies]
+isort = "^5.9.3"
+autoflake = "^1.4"
+black = "^21.7b0"
+flake8 = "^3.9.2"
+pytest = "^6.2.4"
+bandit = "^1.7.0"
+safety = "^1.10.3"
+mypy = "^0.910"
+shiv = "^0.5.2"
+types-requests = "^2.25.6"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+fetchbin = "fetchbin.console:main"
