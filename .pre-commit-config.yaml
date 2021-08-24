@@ -39,3 +39,4 @@ repos:
     hooks:
     - id: bandit
       # A security linter.
+      args: ["--skip", "B101"]
