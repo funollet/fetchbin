@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 import tempfile
 from pathlib import Path
 
@@ -40,11 +41,30 @@ def expand(archive):
         debug(f"no need to unpack {archive}")
 
 
-def guess_bin_path(name, base_path):
+def guess_bin_path(name):
     """Find the desired executable file using heuristics"""
     candidate = Path(name)
-    if candidate.exists():
+    if candidate.is_file():
         return candidate
+
+    patterns = [
+        f"bin/{name}",
+        f"**/bin/{name}",
+        f"{name}*/{name}",
+        f"{name}[_-]{sys.platform}[_-]*",
+        f"**/{name}[_-]{sys.platform}[_-]*",
+        f"{name}-[0-9].[0-9].[0-9]-{sys.platform}",
+        f"{name}-v[0-9].[0-9].[0-9]-{sys.platform}",
+    ]
+    if sys.platform == "darwin":
+        patterns += [
+            f"{name}[_-]mac[oO][sS][_-]*",
+            f"**/{name}[_-]mac[oO][sS][_-]*",
+        ]
+    for f in Path(".").glob(f"**/{name}*"):
+        for pattern in patterns:
+            if f.is_file() and f.match(pattern):
+                return f
     raise FileNotFoundError("unable to determine the binary filename")
 
 
@@ -75,5 +95,5 @@ def main(url, name, dest, verbose):
         os.chdir(tmpdirname)
         archive = download_file(release_url)
         expand(archive)
-        bin_path = guess_bin_path(name, archive)
+        bin_path = guess_bin_path(name)
         install(bin_path, dest_dir() / name)
