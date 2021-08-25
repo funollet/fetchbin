@@ -12,9 +12,25 @@ from . import __version__
 DEBUG = False
 
 
+class GuessProjectNameError(Exception):
+    """unable to guess the project name"""
+
+
 # Quick and dirty logging.
 def debug(s):
     DEBUG and print(f"[debug] {s}")
+
+
+def guess_project_name(url):
+    try:
+        if "github.com/" in url:
+            result = url.split("github.com/")[1].split("/")[1]
+        else:
+            result = url.split("/")[1]
+    except IndexError:
+        raise GuessProjectNameError("unable to guess the project name")
+    debug(f"guess name: {result}")
+    return result
 
 
 def download_file(url, dest_file=""):
@@ -90,6 +106,11 @@ def main(url, name, dest, verbose):
     DEBUG = verbose
 
     release_url = url
+    try:
+        name = name or guess_project_name(release_url)
+    except GuessProjectNameError:
+        raise click.UsageError("Unable to guess the project name. Please use --name")
+
     with tempfile.TemporaryDirectory() as tmpdirname:
         debug(f"change to directory {tmpdirname}")
         os.chdir(tmpdirname)

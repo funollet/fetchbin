@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from fetchbin.console import guess_bin_path
+from fetchbin.console import GuessProjectNameError, guess_bin_path, guess_project_name
 
 
 @contextmanager
@@ -78,3 +78,22 @@ def test_guess_bin_path_not_found(fixture_dir):
     with pytest.raises(FileNotFoundError):
         with cd(fixture_dir):
             guess_bin_path("project")
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://github.com/someuser/somename/release/0.0.0/anothername.tar.gz",
+        "https://github.com/someuser/somename/release/0.0.0/",
+        "github.com/someuser/somename/release/0.0.0/",
+        "someuser/somename/release/0.0.0/",
+        "someuser/somename",
+    ],
+)
+def test_guess_project_name(url):
+    assert guess_project_name(url) == "somename"
+
+
+def test_guess_project_name_raises_error():
+    with pytest.raises(GuessProjectNameError):
+        guess_project_name("")
