@@ -5,7 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from fetchbin.console import GuessProjectNameError, guess_bin_path, guess_project_name
+from fetchbin.exceptions import GuessProjectNameError
+from fetchbin.fetch import guess_bin_path, guess_project_name
 
 
 @contextmanager
