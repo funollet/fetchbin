@@ -1,7 +1,9 @@
+import logging
 import os
 import shutil
 import sys
 import tempfile
+from logging import debug
 from pathlib import Path
 
 import click
@@ -9,16 +11,9 @@ from requests import get
 
 from . import __version__
 
-DEBUG = False
-
 
 class GuessProjectNameError(Exception):
     """unable to guess the project name"""
-
-
-# Quick and dirty logging.
-def debug(s):
-    DEBUG and print(f"[debug] {s}")
 
 
 def guess_project_name(url):
@@ -102,8 +97,7 @@ def install(src, dest):
 def main(url, name, dest, verbose):
     """Download and install binary files."""
     # Setup logging.
-    global DEBUG
-    DEBUG = verbose
+    logging.basicConfig(level=logging.DEBUG)
 
     release_url = url
     try:
